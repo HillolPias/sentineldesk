@@ -1,6 +1,11 @@
-def main():
-    print("Hello from api!")
+from fastapi import FastAPI
+from app.routers import auth
+
+app = FastAPI(title="SentinelDesk API")
+
+app.include_router(auth.router)
 
 
-if __name__ == "__main__":
-    main()
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
