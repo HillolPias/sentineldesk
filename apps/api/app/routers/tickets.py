@@ -1,4 +1,3 @@
-from unittest import result
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -8,6 +7,9 @@ from app.db.models import Ticket
 from app.auth.dependencies import get_current_tenant
 from app.db.session import get_db
 from app.schemas.ticket import TicketCreate, TicketResponse
+
+from arq import create_pool
+from worker.settings import get_redis_settings
 
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
@@ -26,6 +28,11 @@ async def create_ticket(
     db.add(ticket)
     await db.commit()
     await db.refresh(ticket)
+
+    redis = await create_pool(get_redis_settings())
+    await redis.enqueue_job("triage_ticket", str(ticket.id))
+    await redis.close()
+
     return ticket
 
 
