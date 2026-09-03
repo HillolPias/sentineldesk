@@ -1,5 +1,5 @@
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,15 +8,13 @@ from app.auth.dependencies import get_current_tenant
 from app.db.session import get_db
 from app.schemas.ticket import TicketCreate, TicketResponse
 
-from arq import create_pool
-from worker.settings import get_redis_settings
-
 router = APIRouter(prefix="/tickets", tags=["tickets"])
 
 
 @router.post("", response_model=TicketResponse, status_code=status.HTTP_201_CREATED)
 async def create_ticket(
     payload: TicketCreate,
+    request: Request,
     current: dict = Depends(get_current_tenant),
     db: AsyncSession = Depends(get_db),
 ):
@@ -29,9 +27,7 @@ async def create_ticket(
     await db.commit()
     await db.refresh(ticket)
 
-    redis = await create_pool(get_redis_settings())
-    await redis.enqueue_job("triage_ticket", str(ticket.id))
-    await redis.close()
+    await request.app.state.redis.enqueue_job("triage_ticket", str(ticket.id))
 
     return ticket
 
