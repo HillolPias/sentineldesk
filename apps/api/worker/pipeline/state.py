@@ -19,3 +19,6 @@ class TriageState(TypedDict):
     # populated by guardrail node
     guardrail_passed: Optional[bool]
     guardrail_reason: Optional[str]
+
+    # populated by finalize node, after human approval resumes the graph
+    finalized: Optional[bool]
