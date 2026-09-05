@@ -13,6 +13,12 @@ class Settings(BaseSettings):
     langfuse_host: str
     jwt_secret: str
 
+    @property
+    def database_url_psycopg(self) -> str:
+        # LangGraph's checkpointer uses psycopg, which wants a plain
+        # postgresql:// DSN — strip SQLAlchemy's +asyncpg driver suffix.
+        return self.database_url.replace("postgresql+asyncpg://", "postgresql://")
+
 
 @lru_cache
 def get_settings() -> Settings:

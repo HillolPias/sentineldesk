@@ -8,7 +8,7 @@ client = AsyncOpenAI(api_key=settings.openai_api_key)
 
 CLASSIFY_MODEL = "gpt-4o-mini"
 
-CLASSIFY_PROMPT = """You are a suppert ticket triage assistant. Classify this ticket.
+CLASSIFY_PROMPT = """You are a support ticket triage assistant. Classify this ticket.
 
 Subject: {subject}
 Body: {body}
