@@ -50,7 +50,7 @@ async def triage_ticket(ctx, ticket_id: str) -> None:
 
         # Graph has paused after guardrail (interrupt_after=["guardrail"]).
         # Reflect that in the ticket row so the API/UI can show it.
-        ticket.status = TicketStatus.pending_appoval
+        ticket.status = TicketStatus.pending_approval
         ticket.category = result_state.get("category")
         ticket.priority = result_state.get("urgency")
         ticket.ai_draft = result_state.get("draft_response")
