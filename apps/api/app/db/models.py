@@ -67,6 +67,7 @@ class Ticket(Base):
         default=TicketStatus.pending,
         nullable=False,
     )
+    category: Mapped[str | None] = mapped_column(String(50), nullable=True)  # NEW
     ai_draft: Mapped[str | None] = mapped_column(String, nullable=True)
     priority: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
