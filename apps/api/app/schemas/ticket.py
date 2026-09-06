@@ -17,6 +17,7 @@ class TicketResponse(BaseModel):
     subject: str
     body: str
     status: TicketStatus
+    category: str | None  # NEW
     ai_draft: str | None
     priority: str | None
     created_at: datetime

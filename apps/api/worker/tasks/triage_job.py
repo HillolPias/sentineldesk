@@ -2,7 +2,9 @@ from app.db.session import async_session_factory
 from sqlalchemy import select
 from app.db.models import Ticket, TicketStatus
 import uuid
-import asyncio
+from worker.pipeline.checkpointer import get_checkpointer
+from worker.pipeline.graph import compile_graph
+from worker.pipeline.observability import get_langfuse_handler
 
 
 async def triage_ticket(ctx, ticket_id: str) -> None:
@@ -23,11 +25,34 @@ async def triage_ticket(ctx, ticket_id: str) -> None:
             # Job could theoretically run after the ticket was deleted; don't crash the worker.
             return
 
-        # --- Stub for now; Step 9 replaces this with the real LangGraph pipeline ---
-        await asyncio.sleep(2)  # simulate work, prove the async decoupling visibly
+        config = {"configurable": {"thread_id": ticket_id}}
+
+        async with get_checkpointer() as checkpointer:
+            graph = compile_graph(checkpointer)
+
+            initial_state = {
+                "ticket_id": ticket_id,
+                "subject": ticket.subject,
+                "body": ticket.body,
+            }
+
+            langfuse_handler = get_langfuse_handler()
+            result_state = await graph.ainvoke(
+                initial_state,
+                config={
+                    **config,
+                    "callbacks": [langfuse_handler],
+                    "metadata": {
+                        "langfuse_session_id": ticket_id,
+                    },
+                },
+            )
+
+        # Graph has paused after guardrail (interrupt_after=["guardrail"]).
+        # Reflect that in the ticket row so the API/UI can show it.
         ticket.status = TicketStatus.pending_appoval
-        ticket.priority = "medium"
-        ticket.ai_draft = "This is a placeholder AI-generated draft response."
-        # ---------------------------------------------------------------------------
+        ticket.category = result_state.get("category")
+        ticket.priority = result_state.get("urgency")
+        ticket.ai_draft = result_state.get("draft_response")
 
         await db.commit()
