@@ -12,7 +12,7 @@ class Base(DeclarativeBase):
 
 class TicketStatus(str, enum.Enum):
     pending = "pending"
-    pending_appoval = "pending_approval"
+    pending_approval = "pending_approval"
     approved = "approved"
     sent = "sent"
     rejected = "rejected"
