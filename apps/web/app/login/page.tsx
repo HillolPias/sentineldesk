@@ -4,7 +4,6 @@ import { useState, SyntheticEvent } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { ApiError } from "@/lib/api";
-import { DEFAULT_MIN_VERSION } from "tls";
 
 export default function LoginPage() {
   const { login } = useAuth();

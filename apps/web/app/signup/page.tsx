@@ -20,7 +20,6 @@ export default function SignupPage() {
     try {
       await signup(tenantName, email, password);
     } catch (err) {
-      console.error("Signup error:", err);
       setError(err instanceof ApiError ? err.message : "Signup failed");
     } finally {
       setSubmitting(false);
