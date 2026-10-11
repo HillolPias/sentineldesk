@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     langfuse_secret_key: str
     langfuse_host: str
     jwt_secret: str
+    stripe_secret_key: str
 
     @property
     def database_url_psycopg(self) -> str:
