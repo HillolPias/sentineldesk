@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
 import { api } from "./api";
 
@@ -18,15 +24,23 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function getInitialAuthState(): boolean {
-  if (typeof window === "undefined") return false;
-  return !!localStorage.getItem("token");
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(getInitialAuthState);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // localStorage doesn't exist during server rendering, so the auth check
+    // MUST happen here (post-mount, client-only) rather than during initial
+    // render — reading it synchronously in render (even via a lazy useState
+    // initializer) causes a real hydration mismatch: server always renders
+    // "logged out", client would immediately compute "logged in", and React
+    // has to discard and redo the whole tree. This effect is the correct,
+    // necessary pattern here, despite the lint rule's generic objection.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsAuthenticated(!!localStorage.getItem("token"));
+    setLoading(false);
+  }, []);
 
   async function login(email: string, password: string) {
     const result = await api.login(email, password);
