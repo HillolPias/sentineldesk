@@ -78,4 +78,8 @@ class Ticket(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
+    invoiced_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
     tenant: Mapped["Tenant"] = relationship(back_populates="tickets")
