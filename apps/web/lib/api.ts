@@ -65,6 +65,11 @@ export const api = {
 
   rejectTicket: (id: string) =>
     request<Ticket>(`/tickets/${id}/reject`, { method: "POST" }),
+
+  getBillingSummary: () => request<BillingSummary>("/billing/summary"),
+
+  generateInvoice: () =>
+    request<InvoiceResult>("/billing/invoice", { method: "POST" }),
 };
 
 export type Ticket = {
@@ -77,6 +82,19 @@ export type Ticket = {
   priority: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type BillingSummary = {
+  unbilled_tickets: number;
+  price_per_ticket_cents: number;
+  amount_due_cents: number;
+};
+
+export type InvoiceResult = {
+  invoice_id: string;
+  hosted_invoice_url: string | null;
+  tickets_billed: number;
+  amount_due_cents: number;
 };
 
 export { ApiError };
