@@ -45,7 +45,6 @@ function TicketsPageContent() {
     // or SSE here; polling is the simple, honest choice for this scope.
     const interval = setInterval(loadTickets, 4000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleCreate(e: SyntheticEvent) {
@@ -70,9 +69,12 @@ function TicketsPageContent() {
     <div className="max-w-3xl mx-auto p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Tickets</h1>
-        <button onClick={logout} className="text-sm text-gray-500">
-          Log out
-        </button>
+        <div>
+          <Link href="/billing" className="text-sm text-blue-600">Billing</Link>
+          <button onClick={logout} className="text-sm text-gray-500">
+            Log out
+          </button>
+        </div>
       </div>
 
       <form

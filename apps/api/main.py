@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from arq import create_pool
 from worker.settings import get_redis_settings
-from app.routers import auth, tickets
+from app.routers import auth, tickets, billing
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,6 +26,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(tickets.router)
+app.include_router(billing.router)
 
 
 @app.get("/health")

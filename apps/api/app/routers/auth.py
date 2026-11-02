@@ -6,6 +6,7 @@ from sqlalchemy import select
 from app.db.session import get_db
 from app.db.models import Tenant, User
 from app.auth.security import hash_password, verify_password, create_access_token
+from app.core.stripe_client import create_customer
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -31,6 +32,9 @@ async def signup(payload: SignupRequest, db: AsyncSession = Depends(get_db)):
     tenant = Tenant(name=payload.tenant_name)
     db.add(tenant)
     await db.flush()  # assigns tenant.id without committing yet
+
+    stripe_customer_id = await create_customer(payload.tenant_name, payload.email)
+    tenant.stripe_customer_id = stripe_customer_id
 
     user = User(
         tenant_id=tenant.id,
