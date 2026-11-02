@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { RequireAuth } from "@/components/require-auth";
 import { api, Ticket, ApiError } from "@/lib/api";
 
 function TicketDetailContent() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
 
   const [ticket, setTicket] = useState<Ticket | null>(null);

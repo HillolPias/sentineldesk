@@ -31,7 +31,6 @@ function BillingContent() {
         // rule over-flags it (https://github.com/facebook/react/issues/34743).
         // eslint-disable-next-line react-hooks/set-state-in-effect
         loadSummary();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     async function handleGenerate() {

@@ -45,7 +45,6 @@ function TicketsPageContent() {
     // or SSE here; polling is the simple, honest choice for this scope.
     const interval = setInterval(loadTickets, 4000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function handleCreate(e: SyntheticEvent) {
