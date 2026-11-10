@@ -36,7 +36,7 @@ def _billable(tenant_id: uuid.UUID):
     return (
         Ticket.tenant_id == tenant_id,
         Ticket.invoiced_at.is_(None),
-        Ticket.status == TicketStatus.pending,
+        Ticket.status != TicketStatus.pending,
     )
 
 
