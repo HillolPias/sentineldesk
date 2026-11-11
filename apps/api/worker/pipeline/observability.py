@@ -1,5 +1,6 @@
 from langfuse import Langfuse
 from langfuse.langchain import CallbackHandler
+
 from app.core.config import get_settings
 
 settings = get_settings()

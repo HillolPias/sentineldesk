@@ -1,4 +1,4 @@
-from typing import TypedDict, Optional
+from typing import TypedDict
 
 
 class TriageState(TypedDict):
@@ -7,18 +7,18 @@ class TriageState(TypedDict):
     body: str
 
     # populated by classify node
-    category: Optional[str]
-    urgency: Optional[str]
+    category: str | None
+    urgency: str | None
 
     # populated by retrieve node
-    retrieved_context: Optional[str]
+    retrieved_context: str | None
 
     # populated by draft node
-    draft_response: Optional[str]
+    draft_response: str | None
 
     # populated by guardrail node
-    guardrail_passed: Optional[bool]
-    guardrail_reason: Optional[str]
+    guardrail_passed: bool | None
+    guardrail_reason: str | None
 
     # populated by finalize node, after human approval resumes the graph
-    finalized: Optional[bool]
+    finalized: bool | None

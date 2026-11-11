@@ -1,10 +1,11 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from arq import create_pool
-from worker.settings import get_redis_settings
-from app.routers import auth, tickets, billing
 
+from arq import create_pool
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.routers import auth, billing, tickets
+from worker.settings import get_redis_settings
 
 
 @asynccontextmanager

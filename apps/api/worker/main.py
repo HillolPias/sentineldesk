@@ -3,6 +3,7 @@ import logging
 import sys
 
 from arq.worker import run_worker
+
 from worker.settings import get_redis_settings
 from worker.tasks.triage_job import triage_ticket
 

@@ -1,8 +1,9 @@
 from sqlalchemy import select
-from app.db.session import async_session_factory
+
 from app.db.models_kb import KnowledgeArticle
-from worker.pipeline.state import TriageState
+from app.db.session import async_session_factory
 from worker.pipeline.seed_kb import get_embedding
+from worker.pipeline.state import TriageState
 
 
 async def retrieve_node(state: TriageState) -> dict:

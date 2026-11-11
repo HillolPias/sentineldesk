@@ -4,12 +4,13 @@ Safe to re-run — upserts by external_id rather than duplicating rows.
 """
 
 import asyncio
+
 from openai import AsyncOpenAI
 from sqlalchemy import select
 
 from app.core.config import get_settings
-from app.db.session import async_session_factory
 from app.db.models_kb import KnowledgeArticle
+from app.db.session import async_session_factory
 from worker.pipeline.kb_seed_data import KB_ARTICLES
 
 EMBEDDING_MODEL = "text-embedding-3-small"
