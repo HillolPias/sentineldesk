@@ -1,6 +1,6 @@
 import hashlib
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import get_current_tenant
 from app.core.stripe_client import create_usage_invoice
-from app.db.models import Ticket, Tenant, TicketStatus
+from app.db.models import Tenant, Ticket, TicketStatus
 from app.db.session import get_db
 
 router = APIRouter(prefix="/billing", tags=["billing"])
@@ -93,7 +93,7 @@ async def generate_invoice(
         idempotency_key=f"sentineldesk-{key}",
     )
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     for t in tickets:
         t.invoiced_at = now
     await db.commit()

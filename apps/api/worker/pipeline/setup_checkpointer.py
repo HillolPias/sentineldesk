@@ -6,6 +6,7 @@ owns this schema.
 
 import asyncio
 import sys
+
 from worker.pipeline.checkpointer import get_checkpointer
 
 

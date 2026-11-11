@@ -1,7 +1,9 @@
-from app.db.session import async_session_factory
-from sqlalchemy import select
-from app.db.models import Ticket, TicketStatus
 import uuid
+
+from sqlalchemy import select
+
+from app.db.models import Ticket, TicketStatus
+from app.db.session import async_session_factory
 from worker.pipeline.checkpointer import get_checkpointer
 from worker.pipeline.graph import compile_graph
 from worker.pipeline.observability import get_langfuse_handler

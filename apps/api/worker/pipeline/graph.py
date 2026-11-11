@@ -1,10 +1,10 @@
-from langgraph.graph import StateGraph, END
+from langgraph.graph import END, StateGraph
 
-from worker.pipeline.state import TriageState
 from worker.pipeline.nodes.classify import classify_node
-from worker.pipeline.nodes.retrieve import retrieve_node
 from worker.pipeline.nodes.draft import draft_node
 from worker.pipeline.nodes.guardrail import guardrail_node
+from worker.pipeline.nodes.retrieve import retrieve_node
+from worker.pipeline.state import TriageState
 
 
 async def finalize_node(state: TriageState) -> dict:

@@ -1,16 +1,18 @@
+import enum
 import uuid
 from datetime import datetime
-from sqlalchemy import String, ForeignKey, DateTime, func, Enum as SAEnum, null
+
+from sqlalchemy import DateTime, ForeignKey, String, func
+from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-import enum
 
 
 class Base(DeclarativeBase):
     pass
 
 
-class TicketStatus(str, enum.Enum):
+class TicketStatus(enum.StrEnum):
     pending = "pending"
     pending_approval = "pending_approval"
     approved = "approved"

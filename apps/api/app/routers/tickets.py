@@ -1,13 +1,13 @@
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import Ticket, TicketStatus
 from app.auth.dependencies import get_current_tenant
+from app.db.models import Ticket, TicketStatus
 from app.db.session import get_db
 from app.schemas.ticket import TicketCreate, TicketResponse
-
 from worker.pipeline.checkpointer import get_checkpointer
 from worker.pipeline.graph import compile_graph
 

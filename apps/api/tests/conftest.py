@@ -37,6 +37,7 @@ os.environ["JWT_SECRET"] = "test-secret"
 os.environ["STRIPE_SECRET_KEY"] = "sk_test_not_real"
 
 from sqlalchemy import text  # noqa: E402
+
 from app.db.models import Ticket  # noqa: E402
 from app.db.session import async_session_factory, engine  # noqa: E402
 from main import app as fastapi_app  # noqa: E402
