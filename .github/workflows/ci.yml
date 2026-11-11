@@ -92,3 +92,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+
+  docker:
+    name: docker
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t sentineldesk-api apps/api

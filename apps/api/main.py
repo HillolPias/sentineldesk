@@ -4,6 +4,7 @@ from arq import create_pool
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.config import get_settings
 from app.routers import auth, billing, tickets
 from worker.settings import get_redis_settings
 
@@ -17,9 +18,11 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="SentinelDesk API", lifespan=lifespan)
 
+settings = get_settings()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[o.strip() for o in settings.cors_origins.split(",") if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

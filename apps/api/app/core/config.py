@@ -14,12 +14,16 @@ class Settings(BaseSettings):
     langfuse_host: str
     jwt_secret: str
     stripe_secret_key: str
+    cors_origins: str = "http://localhost:3000"
 
     @property
     def database_url_psycopg(self) -> str:
         # LangGraph's checkpointer uses psycopg, which wants a plain
         # postgresql:// DSN — strip SQLAlchemy's +asyncpg driver suffix.
-        return self.database_url.replace("postgresql+asyncpg://", "postgresql://")
+        url = self.database_url.replace("postgresql+asyncpg://", "postgresql://")
+
+        # asyncpg spells it ssl=require, psycopg spells it sslmode=require
+        return url.replace("ssl=require", "sslmode=require")
 
 
 @lru_cache
