@@ -46,7 +46,7 @@ jobs:
       JWT_SECRET: ci-secret
       STRIPE_SECRET_KEY: sk_test_ci_not_real
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: astral-sh/setup-uv@v6
         with:
@@ -81,7 +81,7 @@ jobs:
     env:
       NEXT_PUBLIC_API_URL: http://localhost:8000
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
@@ -98,5 +98,5 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: docker build -t sentineldesk-api apps/api
