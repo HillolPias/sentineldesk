@@ -10,7 +10,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sentinel"]
+      test: ["CMD-SHELL", "pg_isready -U sentinel -d sentineldesk"]
       interval: 5s
       timeout: 5s
       retries: 5

@@ -17,8 +17,10 @@ async def setup():
 
 
 def main():
-    if sys.platform == "win32":
-        asyncio.run(setup(), loop_factory=asyncio.SelectorEventLoop)
+    kwargs = (
+        {"loop_factory": asyncio.SelectorEventLoop} if sys.platform == "win32" else {}
+    )
+    asyncio.run(setup(), **kwargs)
 
 
 if __name__ == "__main__":
