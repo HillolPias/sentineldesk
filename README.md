@@ -31,6 +31,7 @@ exactly where it stopped.
   idempotently (row locks plus Stripe idempotency keys, so a ticket is never billed twice).
 - **Quality gates.** pytest suite against a real Postgres, Alembic migrations checked on an empty
   database, ruff, frontend lint and production build, Docker image build. All run on every PR.
+  ![Langfuse trace of one ticket](docs/assets/langfuse-trace.png)
 
 ## Architecture
 

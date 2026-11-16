@@ -1,3 +1,9 @@
+from sqlalchemy import func, select
+
+from app.db.models import Tenant
+from app.db.session import async_session_factory
+
+
 async def test_signup_returns_token_and_creates_stripe_customer(client):
     resp = await client.post(
         "/auth/signup",
@@ -53,3 +59,36 @@ async def test_very_long_password_does_not_crash(client):
         json={"tenant_name": "Acme", "email": "long@acme.com", "password": "x" * 200},
     )
     assert resp.status_code == 200
+
+
+async def test_signup_with_an_existing_email_returns_409_without_creating_a_tenant(
+    client, make_tenant
+):
+    await make_tenant("Acme", "a@acme.com")
+
+    resp = await client.post(
+        "/auth/signup",
+        json={"tenant_name": "Other", "email": "a@acme.com", "password": "testpass123"},
+    )
+
+    assert resp.status_code == 409
+    async with async_session_factory() as db:
+        count = (
+            await db.execute(select(func.count()).select_from(Tenant))
+        ).scalar_one()
+    assert count == 1
+
+
+async def test_emails_are_case_insensitive(client, make_tenant):
+    await make_tenant("Acme", "a@acme.com")
+
+    duplicate = await client.post(
+        "/auth/signup",
+        json={"tenant_name": "Other", "email": "A@Acme.com", "password": "testpass123"},
+    )
+    login = await client.post(
+        "/auth/login", json={"email": "A@ACME.COM", "password": "testpass123"}
+    )
+
+    assert duplicate.status_code == 409
+    assert login.status_code == 200

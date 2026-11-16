@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     jwt_secret: str
     stripe_secret_key: str
     cors_origins: str = "http://localhost:3000"
+    rate_limit_tickets_per_hour: int = 10
+    rate_limit_daily_ticket_cap: int = 200
+    rate_limit_signups_per_hour_per_ip: int = 5
+    rate_limit_logins_per_hour_per_ip: int = 30
 
     @property
     def database_url_psycopg(self) -> str:

@@ -87,6 +87,7 @@ function TicketsPageContent() {
           required
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
+          maxLength={200}
           className="w-full border rounded px-3 py-2"
         />
         <textarea
@@ -94,6 +95,7 @@ function TicketsPageContent() {
           required
           value={body}
           onChange={(e) => setBody(e.target.value)}
+          maxLength={4000}
           className="w-full border rounded px-3 py-2"
           rows={3}
         />
