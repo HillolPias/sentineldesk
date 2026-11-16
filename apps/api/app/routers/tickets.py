@@ -1,10 +1,13 @@
 import uuid
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.dependencies import get_current_tenant
+from app.core.config import get_settings
+from app.core.rate_limit import hit
 from app.db.models import Ticket, TicketStatus
 from app.db.session import get_db
 from app.schemas.ticket import TicketCreate, TicketResponse
@@ -21,6 +24,30 @@ async def create_ticket(
     current: dict = Depends(get_current_tenant),
     db: AsyncSession = Depends(get_db),
 ):
+    settings = get_settings()
+    redis = request.app.state.redis
+
+    await hit(
+        redis,
+        f"rl:tickets:{current['tenant_id']}",
+        settings.rate_limit_tickets_per_hour,
+        3600,
+        f"Limit reached: {settings.rate_limit_tickets_per_hour} tickets per hour per workspace.",
+    )
+
+    now = datetime.now(UTC)
+    midnight = (now + timedelta(days=1)).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+
+    await hit(
+        redis,
+        f"rl:tickets:global:{now:%Y-%m-%d}",
+        settings.rate_limit_daily_ticket_cap,
+        int((midnight - now).total_seconds()) + 60,
+        "The public demo has reached its daily ticket limit.",
+    )
+
     ticket = Ticket(
         tenant_id=uuid.UUID(current["tenant_id"]),
         subject=payload.subject,

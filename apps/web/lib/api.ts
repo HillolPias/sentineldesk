@@ -29,7 +29,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const body = await response
       .json()
       .catch(() => ({ detail: "Unknown error" }));
-    throw new ApiError(response.status, body.detail || "Request failed");
+    const detail =
+      typeof body.detail === "string"
+        ? body.detail
+        : "Please check your input and try again.";
+    throw new ApiError(response.status, detail);
   }
 
   // 204/empty responses have no body to parse

@@ -12,4 +12,4 @@ python -m worker.pipeline.setup_checkpointer
 python -m worker.main &
 
 # 4. API in the foreground; exec makes it PID 1 so it receives stop signals
-exec uvicorn main:app --host 0.0.0.0 --port "${PORT:-8000}"
+exec uvicorn main:app --host 0.0.0.0 --port "${PORT:-8000}" --proxy-headers --forwarded-allow-ips="*"

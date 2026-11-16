@@ -83,13 +83,45 @@ async def clean_db():
 
 
 class FakeRedis:
-    """Stands in for the Arq pool: records jobs instead of queueing them."""
+    """Stands in for the Arq pool: records jobs instead of queueing them, and models counter with expiry."""
 
     def __init__(self):
         self.enqueued = []
+        self._data = {}  # key -> [value, expires_at | None]
+        self.now = 0.0
+
+    def advance(self, seconds):
+        self.now += seconds
+
+    def _purge(self, key):
+        item = self._data.get(key)
+        if item and item[1] is not None and item[1] <= self.now:
+            del self._data[key]
 
     async def enqueue_job(self, function, *args, **kwargs):
         self.enqueued.append((function, args))
+
+    async def set(self, key, value, ex=None, nx=False):
+        self._purge(key)
+        if nx and key in self._data:
+            return None
+        self._data[key] = [int(value), self.now + ex if ex else None]
+        return True
+
+    async def incr(self, key):
+        self._purge(key)
+        item = self._data.setdefault(key, [0, None])
+        item[0] += 1
+        return item[0]
+
+    async def ttl(self, key):
+        self._purge(key)
+        item = self._data.get(key)
+        if item is None:
+            return -2
+        if item[1] is None:
+            return -1
+        return max(0, int(item[1] - self.now))
 
 
 class FakeGraph:
