@@ -135,7 +135,7 @@ Open http://localhost:3000, create a workspace, submit a ticket, and approve the
 ```bash
 cd apps/api
 uv run ruff check .
-uv run pytest -v        # 31 tests; Stripe, Redis and the LLM graph are faked, Postgres is real
+uv run pytest -v        # 39 tests; Stripe, Redis and the LLM graph are faked, Postgres is real
 ```
 
 The suite runs against a real Postgres test database built from the Alembic migrations, so schema
@@ -147,8 +147,6 @@ migrations drifting apart.
 - **Free-tier hosting.** Cold starts (about a minute). The API and the worker share one container
   (separate entrypoints, ready to split). Redis is non-persistent: queued-but-unstarted jobs are lost on
   restart, while paused approvals survive because their state lives in Postgres.
-- **Rate limiting is not implemented yet**, so a public deployment needs a spend cap on the LLM key.
-  Planned: per-tenant limits and a request-size cap.
 - **Tenant isolation is enforced in application queries (and tested)**, not yet by Postgres row-level
   security.
 - The UI **polls every 4 seconds**; SSE or WebSockets would be the next step.
