@@ -47,3 +47,11 @@ double-bill.
 
 `gpt-4o-mini` for every step, temperature 0 for classification and the guardrail, grounded drafting that
 is told not to invent policy. A bigger model for drafting is a one-line change.
+
+## 9. Fixed-window rate limits in Redis, failing closed
+
+Per-workspace ticket limit, a global daily cap (the real guard on LLM spend, since a workspace limit
+alone is bypassed by creating many workspaces), and per-IP limits on signup and login (which also
+protects the small free instance from bcrypt CPU load).
+**Cost:** a fixed window allows a short burst at the boundary (a sliding window or token bucket would
+not), and if Redis is down requests fail rather than slip through.
