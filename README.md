@@ -24,7 +24,7 @@ exactly where it stopped.
   signed JWT. Cross-tenant reads, approvals and billing are covered by tests; a missing filter fails CI.
 - **Durable human-in-the-loop.** The graph state is checkpointed to Postgres (`thread_id` = ticket id),
   so an approval in the API process resumes a run that was paused by the worker process.
-- **Async by design.** `POST /tickets` returns immediately; an Arq worker on Redis does the slow LLM work.
+- **Async by design.** `POST /tickets` returns without waiting for the LLM; an Arq worker on Redis does the slow LLM work.
 - **RAG on pgvector.** Knowledge-base embeddings live in the same Postgres as the application data.
 - **Observability.** Every LLM call is traced in Langfuse, grouped by ticket.
 - **Usage-based billing (Stripe test mode).** Processed tickets are metered in Postgres and invoiced
@@ -141,6 +141,14 @@ uv run pytest -v        # 39 tests; Stripe, Redis and the LLM graph are faked, P
 The suite runs against a real Postgres test database built from the Alembic migrations, so schema
 bugs surface too. CI also upgrades an empty database and runs `alembic check` to catch models and
 migrations drifting apart.
+
+## Performance
+
+Measured in a 0.5-CPU container on a development machine, with Stripe and the LLM faked (details and
+caveats in [`docs/benchmarks.md`](docs/benchmarks.md)): 100 tickets from 25 concurrent clients were all
+accepted (about 12 req/s, zero errors) and the worker drained the queue at about 55 tickets/min, 91% of
+the ceiling set by its 10 concurrent jobs and the per-workspace rate limit held exactly under a
+40-request concurrent burst (10 accepted, 30 rejected).
 
 ## Known limitations and roadmap
 
